@@ -15,12 +15,12 @@ It 'translates' the CITOOL commands into Powershell verb-noun format, and return
 | New-CIPolicy | citool.exe -up | -FilePath <path to CIP file> | |
 | Update-CIPolicy | citool.exe -up | -FilePath <path to CIP file> | Alias of New-CIPolicy |
 | Remove-CIPolicy | citool.exe -rp | -PolicyGUID <guid of policy> | |
-| Get-CIPolicies | citool -lp | | |
-| New-CIToken | citool -at | -FilePath <path to token file> [ -TokenId <token ID> ] | Currently untested |
-| Remove-CIToken | citool -rt | -TokenId <token ID> | Currently untested |
-| Get-CITokens | citool -lt | | |
-| Get-CIDeviceId | citool -id | | |
-| Update-CIPolicies | citool -r | | |
+| Get-CIPolicies | citool.exe -lp | | |
+| New-CIToken | citool.exe -at | -FilePath <path to token file> [ -TokenId <token ID> ] | Currently untested |
+| Remove-CIToken | citool.exe -rt | -TokenId <token ID> | Currently untested |
+| Get-CITokens | citool.exe -lt | | |
+| Get-CIDeviceId | citool.exe -id | | |
+| Update-CIPolicies | citool.exe -r | | |
 
 ## Examples
 

@@ -46,4 +46,4 @@ It 'translates' the CITOOL commands into Powershell verb-noun format, and return
 
 
 #### Remove a Code Integrity policy
-`Remove-CIPolicy -PolicyGUID '{1f769c63-e4d6-47fa-b3ca-a9cc5f4c3253}`
+`Remove-CIPolicy -PolicyGUID '{1f769c63-e4d6-47fa-b3ca-a9cc5f4c3253}'`

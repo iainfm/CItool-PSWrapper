@@ -37,17 +37,16 @@ param (
     [string]$EndString = "</SiPolicy>"
 )
 
-$StartString
-
 # Grab the content
-$raw = curl $url
+$content = ((Invoke-WebRequest -Uri $url).Content).Split("`n")
 
 # Find the XML within the content
-$EndString_index = 0
 $StartString_index = 0
+$EndString_index = 0
 $index = 0
 
-foreach ($line in $raw) {
+foreach ($line in $content) {
+    # $line
     if ($line -eq $StartString) {
         $StartString_index = $index
     }
@@ -59,12 +58,12 @@ foreach ($line in $raw) {
 }
 
 if (($StartString_index -eq 0) -or ($EndString_index -eq 0)) {
-    Write-Warning 'Could not identify the xml start/end. Please check and try again.'
+    Write-Warning "Could not identify the xml start/end ($StartString_index / $EndString_index). Please check and try again."
     Exit
 }
 
-# Write the URL to a file
-$raw[$StartString_index..$EndString_index] | Out-File $FilePath -Encoding ascii
+# Write the XML to a file
+$content[$StartString_index..$EndString_index] | Out-File $FilePath -Encoding ascii
 
 # Convert the policy to multi format as per https://learn.microsoft.com/en-us/windows/security/application-security/application-control/windows-defender-application-control/design/applications-that-can-bypass-wdac
 Set-CIPolicyIdInfo -FilePath $FilePath -ResetPolicyID

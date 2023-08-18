@@ -28,9 +28,9 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $False)]
-    [string]$Url = 'https://raw.githubusercontent.com/MicrosoftDocs/windows-itpro-docs/37b97a7b5cf2215d414ebc245cb3de30407e4d8a/windows/security/application-security/application-control/windows-defender-application-control/design/microsoft-recommended-driver-block-rules.md',
+    [string]$Url = 'https://raw.githubusercontent.com/MicrosoftDocs/windows-itpro-docs/7a639741a199115563a05f3f458ad500a80f4100/windows/security/application-security/application-control/windows-defender-application-control/design/applications-that-can-bypass-wdac.md',
 	[Parameter(Mandatory = $False)]
-    [string]$FilePath = '.\MicrosoftBlockRules_' + $(Get-Date -Format yyyyMMdd) + '.xml',
+    [string]$FilePath = '.\MicrosoftWindowsRecommendedUserModeBlockList_' + $(Get-Date -Format yyyyMMdd) + '.xml',
     [Parameter(Mandatory = $False)]
     [string]$StartString = "<?xml version=`"1.0`" encoding=`"utf-8`"?>",
     [Parameter(Mandatory = $False)]
@@ -56,6 +56,11 @@ foreach ($line in $raw) {
     }
     #of
     $index++
+}
+
+if (($StartString_index -eq 0) -or ($EndString_index -eq 0)) {
+    Write-Warning 'Could not identify the xml start/end. Please check and try again.'
+    Exit
 }
 
 # Write the URL to a file

@@ -67,3 +67,6 @@ $content[$StartString_index..$EndString_index] | Out-File $FilePath -Encoding as
 
 # Convert the policy to multi format as per https://learn.microsoft.com/en-us/windows/security/application-security/application-control/windows-defender-application-control/design/applications-that-can-bypass-wdac
 Set-CIPolicyIdInfo -FilePath $FilePath -ResetPolicyID
+
+# Set the refresh-without-reboot option
+Set-RuleOption -FilePath $FilePath -Option 16

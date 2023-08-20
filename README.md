@@ -8,45 +8,47 @@ This is a Powershell module that acts as a wrapper for the Microsoft Code Integr
 
 It 'translates' the CITOOL commands into Powershell verb-noun format, and returns the results so that they can be easily manipulated or investigated.
 
+Note: The cmdlets were changed from `*-CI*` to `*-Citool*` to avoid conflict with the `New-CIPolicy` cmdlet in the ConfigCI module. 
+
 ## Cmdlets Published
 
 | Cmdlet | Mapped to CITOOL.EXE command | Parameters | Notes |
 | ------ | ---------------------------- | ---------- |----- |
-| New-CIPolicy | citool.exe -up | -FilePath <path to CIP file> | |
-| Update-CIPolicy | citool.exe -up | -FilePath <path to CIP file> | Alias of New-CIPolicy |
-| Remove-CIPolicy | citool.exe -rp | -PolicyGUID <guid of policy> | |
-| Get-CIPolicies | citool.exe -lp | | |
-| New-CIToken | citool.exe -at | -FilePath <path to token file> [ -TokenId <token ID> ] | Currently untested |
-| Remove-CIToken | citool.exe -rt | -TokenId <token ID> | Currently untested |
-| Get-CITokens | citool.exe -lt | | |
-| Get-CIDeviceId | citool.exe -id | | |
-| Update-CIPolicies | citool.exe -r | | |
+| New-CitoolPolicy | citool.exe -up | -FilePath <path to CIP file> | |
+| Update-CitoolPolicy | citool.exe -up | -FilePath <path to CIP file> | Alias of New-CIPolicy |
+| Remove-CitoolPolicy | citool.exe -rp | -PolicyGUID <guid of policy> | |
+| Get-CitoolPolicies | citool.exe -lp | | |
+| New-CitoolToken | citool.exe -at | -FilePath <path to token file> [ -TokenId <token ID> ] | Currently untested |
+| Remove-CitoolToken | citool.exe -rt | -TokenId <token ID> | Currently untested |
+| Get-CitoolTokens | citool.exe -lt | | |
+| Get-CitoolDeviceId | citool.exe -id | | |
+| Update-CitoolPolicies | citool.exe -r | | |
 
 ## Examples
 
 #### Get the current Code Integrity policies
-`Get-CIPolicies`
+`Get-CitoolPolicies`
 
 
 #### Get the current Code Integrity policies' friendly names
-`(Get-CIPolicies).FriendlyName`
+`(Get-CitoolPolicies).FriendlyName`
 
 
 #### Get the current enforced Code Integrity policies
-`Get-CIPolicies | Where-Object {$_.IsEnforced -eq $True}`
+`Get-CitoolPolicies | Where-Object {$_.IsEnforced -eq $True}`
 
 
 #### Add a new Code Integrity policy
-`New-CIPolicy -FilePath .\mynewpolicy.cip`
+`New-CitoolPolicy -FilePath .\mynewpolicy.cip`
 
 
 #### Update a Code Integrity policy
-`Update-CIPolicy -FilePath .\myupdatedpolicy.cip`
-(Note: `Update-CIPolicy` is an alias of `New-CIPolicy`)
+`Update-CitoolPolicy -FilePath .\myupdatedpolicy.cip`
+(Note: `Update-CitoolPolicy` is an alias of `New-CitoolPolicy`)
 
 
 #### Remove a Code Integrity policy
-`Remove-CIPolicy -PolicyGUID '{1f769c63-e4d6-47fa-b3ca-a9cc5f4c3253}' `
+`Remove-CitoolPolicy -PolicyGUID '{1f769c63-e4d6-47fa-b3ca-a9cc5f4c3253}' `
 
 ## Bonus script - Get-MSBlockList.ps1
 

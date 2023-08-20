@@ -1,8 +1,7 @@
 # Powershell wrapper for citool.exe commands
 # iainfm Aug 2023
 
-function New-CIPolicy {
-
+function New-CitoolPolicy {
 <#
 
     .SYNOPSIS
@@ -15,34 +14,39 @@ function New-CIPolicy {
     Specifies the filename of the binary policy to add or update.
 
     .EXAMPLE
-    New-CIPolicy -FilePath .\NewCIPolicy.cip
+    New-CitoolPolicy -FilePath .\NewCIPolicy.cip
 
     .NOTES
-    Update-CIPolicy is an alias of this command.
+    Update-CitoolPolicy is an alias of this command.
 
     .LINK
     https://learn.microsoft.com/en-us/windows/security/application-security/application-control/windows-defender-application-control/operations/citool-commands
 
 #>
 
-    [alias("Update-CIPolicy")]
+    [alias("Update-CitoolPolicy")]
     param (
     [Parameter(Mandatory = $True)]
     [string]$FilePath)
 
-    $result = ((citool.exe -up $FilePath -json) | ConvertFrom-Json).OperationResult
+    $result = (citool.exe -up $FilePath -json)
+    $json = $result | ConvertFrom-Json
     
-    if ($result -eq 0) { 
-        return $null
+    if ( $json.OperationResult -ne 0 ) {
+
+        Throw "CITOOL.EXE returned error $('0x{0:x}' -f [int32]($json).OperationResult)"
+
     }
+
     else {
-        return $result
+
+        return $null
+
     }
 
 }
 
-function Remove-CIPolicy {
-
+function Remove-CitoolPolicy {
 <#
 
     .SYNOPSIS
@@ -55,10 +59,10 @@ function Remove-CIPolicy {
     Specifies the GUID of the policy to remove.
 
     .EXAMPLE
-    Remove-CIPolicy -PolicyGUID '{d465418f-b1fb-4fa1-8db0-c455f4084fa7}'
+    Remove-CitoolPolicy -PolicyGUID '{d465418f-b1fb-4fa1-8db0-c455f4084fa7}'
     
     .EXAMPLE
-    Remove-CIPolicy -PolicyGUID d465418f-b1fb-4fa1-8db0-c455f4084fa7
+    Remove-CitoolPolicy -PolicyGUID d465418f-b1fb-4fa1-8db0-c455f4084fa7
 
     .NOTES
     Curly braces are optional.
@@ -73,19 +77,20 @@ function Remove-CIPolicy {
     [string]$PolicyGUID)
 
     $PolicyGUID = ($PolicyGUID.Replace('{','')).Replace('}','')
-    $result = ((citool.exe -rp "{$PolicyGUID}" -json) | ConvertFrom-Json).OperationResult
+    $result = (citool.exe -rp "{$PolicyGUID}" -json)
+    $json = $result | ConvertFrom-Json
 
-    if ($result -eq 0) { 
-        return $null
+    if ( $json.OperationResult -ne 0 ) {
+
+        Throw "CITOOL.EXE returned error $('0x{0:x}' -f [int32]($json).OperationResult)"
+
     }
-    else {
-        return $result
-    }
+    
+    return $null
 
 }
 
-function Get-CIPolicies {
-
+function Get-CitoolPolicies {
 <#
 
     .SYNOPSIS
@@ -95,26 +100,27 @@ function Get-CIPolicies {
     Calls "CITOOL.EXE -lp" to list the policies.
 
     .EXAMPLE
-    Get-CIPolicies
+    Get-CitoolPolicies
 
     .LINK
     https://learn.microsoft.com/en-us/windows/security/application-security/application-control/windows-defender-application-control/operations/citool-commands
 
 #>
 
-    $result = ((citool.exe -lp -json) | ConvertFrom-Json).Policies
-    
-    if ($result -eq 0) { 
-        return $null
+    $result = (citool.exe -lp -json)
+    $json = $result | ConvertFrom-Json # This fails if "$result = (citool.exe -lp -json) | ConvertFrom-Json" is used :/
+
+    if ( $json.OperationResult -ne 0 ) {
+
+        Throw "CITOOL.EXE returned error $('0x{0:x}' -f [int32]($result | ConvertFrom-Json).OperationResult)"
+
     }
-    else {
-        return $result
-    }
+
+    return $json.Policies
 
 }
 
-function New-CIToken {
-
+function New-CitoolToken {
     <#
 
     .SYNOPSIS
@@ -130,10 +136,10 @@ function New-CIToken {
     (Optional) Specifies the ID of the token to add.
 
     .EXAMPLE
-    New-CIToken -FilePath token_file.txt
+    New-CitoolToken -FilePath token_file.txt
     
     .EXAMPLE
-    New-CIToken -FilePath token_file.txt -TokenId d465418f-b1fb-4fa1-8db0-c455f4084fa7
+    New-CitoolToken -FilePath token_file.txt -TokenId d465418f-b1fb-4fa1-8db0-c455f4084fa7
 
     .NOTES
     This command is currently untested.
@@ -149,24 +155,33 @@ function New-CIToken {
     [Parameter(Mandatory = $False)]
     [string]$TokenId)
 
-    if ($null -eq $TokenId) {
-        $result = ((citool.exe -at $FilePath -json) | ConvertFrom-Json).OperationResult
+    if ( $null -eq $TokenId ) {
+
+        $result = (citool.exe -at $FilePath -json)
+
     }
     else {
-        $result = ((citool.exe -at $FilePath --token-id $TokenId -json) | ConvertFrom-Json).OperationResult
+
+        $result = (citool.exe -at $FilePath --token-id $TokenId -json)
+
     }
 
-    if ($result -eq 0) { 
-        return $null
+    $json = $result | ConvertFrom-Json
+
+    if ( $json.OperationResult -ne 0 ) {
+
+        Throw "CITOOL.EXE returned error $('0x{0:x}' -f [int32]($result | ConvertFrom-Json).OperationResult)"
+
     }
     else {
-        return $result
+
+        return $null
+
     }
 
 }
 
-function Remove-CIToken {
-
+function Remove-CitoolToken {
 <#
 
     .SYNOPSIS
@@ -179,7 +194,7 @@ function Remove-CIToken {
     Specifies the ID of the token to remove.
 
     .EXAMPLE
-    Remove-CIToken -TokenId d465418f-b1fb-4fa1-8db0-c455f4084fa7
+    Remove-CitoolToken -TokenId d465418f-b1fb-4fa1-8db0-c455f4084fa7
 
     .NOTES
     This function is currently untested.
@@ -194,19 +209,24 @@ function Remove-CIToken {
     [string]$TokenId)
 
 
-    $result = ((citool.exe -rt $TokenId -json) | ConvertFrom-Json).OperationResult
+    $result = (citool.exe -rt $TokenId -json)
+    $json = $result | ConvertFrom-Json
     
-    if ($result -eq 0) { 
-        return $null
+    if ( $json.OperationResult -ne 0 ) {
+
+        Throw "CITOOL.EXE returned error $('0x{0:x}' -f [int32]($result | ConvertFrom-Json).OperationResult)"
+
     }
+
     else {
-        return $result
+
+        return $null
+
     }
 
 }
 
-function Get-CITokens {
-
+function Get-CitoolTokens {
 <#
 
     .SYNOPSIS
@@ -216,26 +236,31 @@ function Get-CITokens {
     Calls "CITOOL.EXE -lt" to list the policies.
 
     .EXAMPLE
-    Get-CITokens
+    Get-CitoolTokens
 
     .LINK
     https://learn.microsoft.com/en-us/windows/security/application-security/application-control/windows-defender-application-control/operations/citool-commands
 
 #>
 
-    $result = ((citool.exe -lt -json) | ConvertFrom-Json).Tokens
+    $result = (citool.exe -lt -json)
+    $json = $result | ConvertFrom-Json
 
-    if ($result -eq 0) { 
-        return $null
+    if ( $json.OperationResult -ne 0 ) { 
+        
+        Throw "CITOOL.EXE returned error $('0x{0:x}' -f [int32]($result | ConvertFrom-Json).OperationResult)"
+
     }
+
     else {
-        return $result
+
+        return $json.Tokens
+
     }
 
 }
 
-function Get-CIDeviceId {
-
+function Get-CitoolDeviceId {
 <#
 
     .SYNOPSIS
@@ -245,26 +270,30 @@ function Get-CIDeviceId {
     Calls "CITOOL.EXE -id" to display the ID.
 
     .EXAMPLE
-    Get-CIDeviceId
+    Get-CitoolDeviceId
 
     .LINK
     https://learn.microsoft.com/en-us/windows/security/application-security/application-control/windows-defender-application-control/operations/citool-commands
 
 #>
 
-    $result = ((citool.exe -id -json) | ConvertFrom-Json).DeviceID
+    $result = (citool.exe -id -json)
+    $json =  $result | ConvertFrom-Json
 
-    if ($result -eq 0) { 
-        return $null
+    if ( $json.OperationResult -ne 0 ) {
+
+        Throw "CITOOL.EXE returned error $('0x{0:x}' -f [int32]($result | ConvertFrom-Json).OperationResult)"
+
     }
     else {
-        return $result
+
+        return $json.DeviceID
+        
     }
 
 }
 
-function Update-CIPolicies {
-
+function Update-CitoolPolicies {
 <#
 
     .SYNOPSIS
@@ -274,20 +303,25 @@ function Update-CIPolicies {
     Calls "CITOOL.EXE -r" to list the policies.
 
     .EXAMPLE
-    Update-CIPolicies
+    Update-CitoolPolicies
 
     .LINK
     https://learn.microsoft.com/en-us/windows/security/application-security/application-control/windows-defender-application-control/operations/citool-commands
 
 #>
 
-    $result = ((citool.exe -r -json) | ConvertFrom-Json).OperationResult
+    $result = (citool.exe -r -json)
+    $json = $result | ConvertFrom-Json
     
-    if ($result -eq 0) { 
-        return $null
+    if ( $json.OperationResult -ne 0 ) { 
+
+        Throw "CITOOL.EXE returned error $('0x{0:x}' -f [int32]($result | ConvertFrom-Json).OperationResult)"
+
     }
     else {
-        return $result
+
+        return $null
+
     }
 
 }

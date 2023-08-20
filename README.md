@@ -15,7 +15,7 @@ Note: The cmdlets were changed from `*-CI*` to `*-Citool*` to avoid conflict wit
 | Cmdlet | Mapped to CITOOL.EXE command | Parameters | Notes |
 | ------ | ---------------------------- | ---------- |----- |
 | New-CitoolPolicy | citool.exe -up | -FilePath <path to CIP file> | |
-| Update-CitoolPolicy | citool.exe -up | -FilePath <path to CIP file> | Alias of New-CIPolicy |
+| Update-CitoolPolicy | citool.exe -up | -FilePath <path to CIP file> | Alias of New-CitoolPolicy |
 | Remove-CitoolPolicy | citool.exe -rp | -PolicyGUID <guid of policy> | |
 | Get-CitoolPolicies | citool.exe -lp | | |
 | New-CitoolToken | citool.exe -at | -FilePath <path to token file> [ -TokenId <token ID> ] | Currently untested |

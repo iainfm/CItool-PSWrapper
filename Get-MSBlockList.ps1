@@ -70,3 +70,6 @@ Set-CIPolicyIdInfo -FilePath $FilePath -ResetPolicyID
 
 # Set the refresh-without-reboot option
 Set-RuleOption -FilePath $FilePath -Option 16
+
+# Remove the Dynamic Code Security option
+Set-RuleOption -FilePath $FilePath -Option 19 -Delete # TODO: Make this optional
